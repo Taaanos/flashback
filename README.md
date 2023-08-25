@@ -45,6 +45,13 @@ python script_name.py --folder /path/to/videos --max-output-duration DURATION --
 - `--order`: Order of video selection (`rand` or `seq`). Defaults to `rand`.
 - `--extension`: Input video file extension. Defaults to `MP4`.
 
+### Recommended parameters
+
+- `--max-output-duration`: 90 
+- `--min-clip-duration`: 3
+- `--max-clip-duration`: 8
+- `--order`: `rand`
+
 ## Example
 
 Compile videos randomly:

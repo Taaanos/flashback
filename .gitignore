@@ -1,0 +1,8 @@
+# movie files
+*.MP4
+*.mp4
+*.MOV
+*.mov
+
+# IDE files
+*.idea

@@ -5,13 +5,16 @@ import argparse
 from datetime import datetime
 
 
-def compile_videos(folder, max_output_duration, min_clip_duration, max_clip_duration):
-    dir_name = os.path.basename(folder)
-    output_filename = f"{dir_name}_{max_output_duration}_{min_clip_duration}_{max_clip_duration}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.MP4"
+def compile_videos(folder, max_output_duration, min_clip_duration, max_clip_duration, order, extension):
+    dir_name = os.path.basename(os.path.normpath(folder))
+    output_filename = f"{dir_name}_{order}_{max_output_duration}_{min_clip_duration}_{max_clip_duration}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.{extension}"
 
-    video_files = [f for f in os.listdir(folder) if f.endswith('.MP4')]
-    random.shuffle(video_files)
+    video_files = [f for f in os.listdir(folder) if f.endswith('.'+extension)]
 
+    if order == 'rand':
+        random.shuffle(video_files)
+    else:
+        video_files.sort(key=lambda x: os.path.getmtime(os.path.join(folder, x)))
     clips = []
     total_duration = 0
 
@@ -38,13 +41,21 @@ def compile_videos(folder, max_output_duration, min_clip_duration, max_clip_dura
     else:
         print("No valid clips found.")
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Compile a video from a folder of videos in random order.")
-    parser.add_argument("folder", help="Path to the folder containing videos.")
-    parser.add_argument("max_output_duration", type=int, help="Maximum duration of the output video in seconds.")
-    parser.add_argument("min_clip_duration", type=int, help="Minimum duration of each clip in seconds.")
-    parser.add_argument("max_clip_duration", type=int, help="Maximum duration of each clip in seconds.")
+    # Close all subclip readers
+    for clip in clips:
+        clip.reader.close()
 
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Compile videos either randomly or in sequence.')
+    parser.add_argument('--order', choices=['rand', 'seq'], default='rand',
+                        help='Order of video selection (rand or seq).')
+    parser.add_argument('--extension', choices=['MOV', 'MP4'], default='MP4',
+                        help='Extension of video files.')
+    parser.add_argument('--folder', required=True, help='Path to the folder containing videos.')
+    parser.add_argument('--max-output-duration', type=int, required=True, help='Maximum output duration.')
+    parser.add_argument('--max-clip-duration', type=int, required=True, help='Maximum clip duration.')
+    parser.add_argument('--min-clip-duration', type=int, required=True, help='Minimum clip duration.')
     args = parser.parse_args()
 
-    compile_videos(args.folder, args.max_output_duration, args.min_clip_duration, args.max_clip_duration)
+    compile_videos(args.folder, args.max_output_duration, args.min_clip_duration, args.max_clip_duration, args.order, args.extension)

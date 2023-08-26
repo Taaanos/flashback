@@ -17,7 +17,7 @@ def compile_videos(folder, max_output_duration, min_clip_duration, max_clip_dura
     if order == 'rand':
         random.shuffle(video_files)
     else:
-        video_files.sort(key=lambda x: os.path.getatime(os.path.join(folder, x)))
+        video_files.sort(key=lambda x: os.path.getctime(os.path.join(folder, x)))
     clips = []
     total_duration = 0
 

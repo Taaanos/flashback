@@ -29,8 +29,13 @@ def compile_videos(folder, max_output_duration, min_clip_duration, max_clip_dura
 
         start_time = random.uniform(0, video.duration - min_clip_duration)
         end_time = random.uniform(start_time + min_clip_duration, min(start_time + max_clip_duration, video.duration))
-        subclip = video.subclip(start_time, end_time).set_fps(video.fps)
-        clips.append(subclip)
+
+        if start_time < 0:
+            print(f"The video: {video_file} is too short to be used. Please use longer videos.")
+            sys.exit(1)
+
+        newclip = video.subclip(start_time, end_time).set_fps(video.fps)
+        clips.append(newclip)
         total_duration += (end_time - start_time)
 
         video.reader.close()
@@ -41,7 +46,7 @@ def compile_videos(folder, max_output_duration, min_clip_duration, max_clip_dura
         try:
             final_video.write_videofile(output_filename, codec="hevc_videotoolbox", ffmpeg_params=['-q:v', '50'])
         except Exception as e:
-            print(f"The videos in the folder are too short. Please use longer videos. \n Error: {e}")
+            print(f"Error: {e}")
             sys.exit(1)
     else:
         print("No valid clips found.")

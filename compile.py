@@ -60,7 +60,11 @@ def compile_videos(folder, max_output_duration, min_clip_duration, max_clip_dura
     if clips:  # Check if there are valid clips
         final_video = concatenate_videoclips(clips)
         try:
-            final_video.write_videofile(output_filename, codec="hevc_videotoolbox", ffmpeg_params=['-q:v', '50'])
+            final_video.write_videofile(output_filename, codec="hevc_videotoolbox", ffmpeg_params=['-q:v', '50',
+                                                                                                   '-profile:v', 'main',
+                                                                                                   '-level', '5.0',
+                                                                                                   '-tag:v', 'hvc1',
+                                                                                                   '-c:a', 'aac'])
         except Exception as e:
             print(f"Error: {e}")
             sys.exit(1)

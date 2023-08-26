@@ -2,6 +2,12 @@
 
 Flashback is a Python script that compiles videos from a specified folder either randomly or in sequence. It's possible to define the maximum output duration, minimum and maximum clip duration, and the order in which the videos are selected.
 
+## Motivation
+
+Why Flashback? If you're like me, you probably have terabytes of videos sitting on your machine, untouched and unwatched. The problem with many existing solutions, such as Apple Photos or GoPro Quik, is the lack of control over the original video quality and data. Often, you're required to import your videos into an app that maintains its own library, which can be a cumbersome process, especially for large collections.
+
+Flashback provides a lightweight, straightforward alternative. It respects your original video quality and allows for local processing—no need to upload gigabytes of videos to a cloud service or to your phone. It's a flashback in its purest form, without the frills of fancy music or edits. Simply point to the source folder, and get a flashback video generated on your machine. It's a convenient way to relive memories without the hassle.
+
 ## Requirements
 
 - Python 3.x

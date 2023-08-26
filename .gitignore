@@ -4,5 +4,8 @@
 *.MOV
 *.mov
 
+# audio files
+*.mp3
+
 # IDE files
 *.idea

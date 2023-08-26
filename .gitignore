@@ -9,3 +9,9 @@
 
 # IDE files
 *.idea
+
+# images
+*.jpg
+*.jpeg
+*.png
+*.gif

@@ -29,12 +29,12 @@ def compile_videos(folder, max_output_duration, min_clip_duration, max_clip_dura
 
         start_time = random.uniform(0, video.duration - min_clip_duration)
         end_time = random.uniform(start_time + min_clip_duration, min(start_time + max_clip_duration, video.duration))
-        subclip = video.subclip(start_time, end_time).set_fps(60)
-
+        subclip = video.subclip(start_time, end_time).set_fps(video.fps)
         clips.append(subclip)
         total_duration += (end_time - start_time)
 
         video.reader.close()
+        print(f"Using video: {video_file}")
 
     if clips:  # Check if there are valid clips
         final_video = concatenate_videoclips(clips)
@@ -49,7 +49,6 @@ def compile_videos(folder, max_output_duration, min_clip_duration, max_clip_dura
     # Close all subclip readers
     for clip in clips:
         clip.reader.close()
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Compile videos either randomly or in sequence.')

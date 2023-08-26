@@ -1,3 +1,5 @@
+import sys
+
 from moviepy.editor import VideoFileClip, concatenate_videoclips
 import random
 import os
@@ -14,7 +16,7 @@ def compile_videos(folder, max_output_duration, min_clip_duration, max_clip_dura
     if order == 'rand':
         random.shuffle(video_files)
     else:
-        video_files.sort(key=lambda x: os.path.getmtime(os.path.join(folder, x)))
+        video_files.sort(key=lambda x: os.path.getatime(os.path.join(folder, x)))
     clips = []
     total_duration = 0
 
@@ -27,7 +29,6 @@ def compile_videos(folder, max_output_duration, min_clip_duration, max_clip_dura
 
         start_time = random.uniform(0, video.duration - min_clip_duration)
         end_time = random.uniform(start_time + min_clip_duration, min(start_time + max_clip_duration, video.duration))
-
         subclip = video.subclip(start_time, end_time).set_fps(60)
 
         clips.append(subclip)
@@ -37,7 +38,11 @@ def compile_videos(folder, max_output_duration, min_clip_duration, max_clip_dura
 
     if clips:  # Check if there are valid clips
         final_video = concatenate_videoclips(clips)
-        final_video.write_videofile(output_filename, codec="hevc_videotoolbox", ffmpeg_params=['-q:v', '50'])
+        try:
+            final_video.write_videofile(output_filename, codec="hevc_videotoolbox", ffmpeg_params=['-q:v', '50'])
+        except Exception as e:
+            print(f"The videos in the folder are too short. Please use longer videos. \n Error: {e}")
+            sys.exit(1)
     else:
         print("No valid clips found.")
 

@@ -22,8 +22,13 @@ Flashback is a Python script that compiles videos from a specified folder either
    ```bash
    brew install ffmpeg
    ```
-   
-4. If you need to install brew for your system, follow the instructions [here](https://brew.sh/).
+4. Install mediainfo using Homebrew:
+
+   ```bash
+   brew install mediainfo
+   ```
+      
+5. If you need to install brew for your system, follow the instructions [here](https://brew.sh/).
 
 ## Usage
 

@@ -5,12 +5,8 @@ import random
 import os
 import argparse
 from datetime import datetime
-from utils import get_resolution, get_rotation
+from utils import get_video_rotation
 from video_pool import create_video_pool, sort_videos
-
-
-def get_video_files(folder, extension):
-    return [f for f in os.listdir(folder) if f.endswith('.' + extension)]
 
 
 def compile_videos(folders, max_output_duration, min_clip_duration, max_clip_duration, order, extension):
@@ -27,12 +23,7 @@ def compile_videos(folders, max_output_duration, min_clip_duration, max_clip_dur
 
         # There is a bug in moviepy that doesn't respect the rotation metadata
         # see https://github.com/Zulko/moviepy/issues/1871
-        rotation_angle = get_rotation(video)
-        height, width = get_resolution(video)
-        if rotation_angle == 90 or rotation_angle == 270:
-            height, width = width, height
-            print(f"Video is rotated {rotation_angle} degrees. Switching width and height.")
-        print(f"Video resolution: {width}x{height}")
+        height, width = get_video_rotation(video)
         clip = VideoFileClip(video, target_resolution=(height, width))
         print(f"Used video path:{video}")
         video_name = os.path.basename(video)
@@ -92,3 +83,5 @@ if __name__ == "__main__":
 
     compile_videos(args.folders, args.max_output_duration, args.min_clip_duration, args.max_clip_duration, args.order,
                    args.extension)
+    print("Flashback done!")
+

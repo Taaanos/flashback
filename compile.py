@@ -6,49 +6,44 @@ import os
 import argparse
 from datetime import datetime
 from utils import get_resolution, get_rotation
+from video_pool import create_video_pool, sort_videos
 
 
 def get_video_files(folder, extension):
     return [f for f in os.listdir(folder) if f.endswith('.' + extension)]
 
 
-def compile_videos(folder, max_output_duration, min_clip_duration, max_clip_duration, order, extension):
-    dir_name = os.path.basename(os.path.normpath(folder))
-    output_filename = (f"{dir_name}_{order}_{max_output_duration}_{min_clip_duration}_{max_clip_duration}_"
-                       f"{datetime.now().strftime('%Y%m%d_%H%M%S')}.{extension}")
+def compile_videos(folders, max_output_duration, min_clip_duration, max_clip_duration, order, extension):
+    video_pool = create_video_pool(folders, extension)
+    video_pool = sort_videos(video_pool, order)
 
-    video_files = get_video_files(folder, extension)
-    if order == 'rand':
-        random.shuffle(video_files)
-    else:
-        video_files.sort(key=lambda x: os.path.getctime(os.path.join(folder, x)))
     clips = []
     total_duration = 0
 
-    for video_file in video_files:
-        print(f"Using video: {video_file}")
+    for video in video_pool:
+        print(f"Using video: {video}")
         if total_duration >= max_output_duration:
             break
 
         # There is a bug in moviepy that doesn't respect the rotation metadata
         # see https://github.com/Zulko/moviepy/issues/1871
-        video_path = os.path.join(folder, video_file)
-        rotation_angle = get_rotation(video_path)
-        height, width = get_resolution(video_path)
+        rotation_angle = get_rotation(video)
+        height, width = get_resolution(video)
         if rotation_angle == 90 or rotation_angle == 270:
             height, width = width, height
             print(f"Video is rotated {rotation_angle} degrees. Switching width and height.")
         print(f"Video resolution: {width}x{height}")
-        clip = VideoFileClip(video_path, target_resolution=(height, width))
-
+        clip = VideoFileClip(video, target_resolution=(height, width))
+        print(f"Used video path:{video}")
+        video_name = os.path.basename(video)
         if args.debug:
-            clip.save_frame(f"video_frame_{video_file}.png", t=clip.duration / 2)
+            clip.save_frame(f"video_frame_{video_name}.png", t=clip.duration / 2)
 
         start_time = random.uniform(0, clip.duration - min_clip_duration)
         end_time = random.uniform(start_time + min_clip_duration, min(start_time + max_clip_duration, clip.duration))
 
         if start_time < 0:
-            print(f"The video: {video_file} is too short to be used. Please use longer videos.")
+            print(f"The video: {video_name} is too short to be used. Please use longer videos.")
             sys.exit(1)
 
         subclip = clip.subclip(start_time, end_time).set_fps(clip.fps)
@@ -59,8 +54,10 @@ def compile_videos(folder, max_output_duration, min_clip_duration, max_clip_dura
 
     if args.debug:
         for clip in clips:
-            clip.save_frame(f"clip_frame{video_file}.png", t=clip.duration / 2)
+            clip.save_frame(f"clip_frame{video_name}.png", t=clip.duration / 2)
 
+    output_filename = (f"flashback_{order}_{max_output_duration}_{min_clip_duration}_{max_clip_duration}_"
+                       f"{datetime.now().strftime('%Y%m%d_%H%M%S')}.{extension}")
     if clips:  # Check if there are valid clips
         final_video = concatenate_videoclips(clips)
         try:
@@ -86,12 +83,12 @@ if __name__ == "__main__":
                         help='Order of video selection (rand or seq).')
     parser.add_argument('--extension', choices=['MOV', 'MP4'], default='MP4',
                         help='Extension of video files.')
-    parser.add_argument('--folder', required=True, help='Path to the folder containing videos.')
+    parser.add_argument('--folders', nargs='+', required=True, help='List of folders containing videos.')
     parser.add_argument('--max-output-duration', type=int, required=True, help='Maximum output duration.')
     parser.add_argument('--max-clip-duration', type=int, required=True, help='Maximum clip duration.')
     parser.add_argument('--min-clip-duration', type=int, required=True, help='Minimum clip duration.')
     parser.add_argument('--debug', action='store_true', help='Enable debug mode.')
     args = parser.parse_args()
 
-    compile_videos(args.folder, args.max_output_duration, args.min_clip_duration, args.max_clip_duration, args.order,
+    compile_videos(args.folders, args.max_output_duration, args.min_clip_duration, args.max_clip_duration, args.order,
                    args.extension)

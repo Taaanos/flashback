@@ -1,13 +1,21 @@
 # Flashback
 <img src="logo.jpg" width="200" height="200">
 
-Flashback is a Python script that compiles videos from a specified folder either randomly or in sequence. It's possible to define the maximum output duration, minimum and maximum clip duration, and the order in which the videos are selected.
+Flashback is a Python tool that compiles videos from a specified folder either randomly or in sequence. 
+It's possible to define the maximum output duration, minimum and maximum clip duration, and the order in which the videos 
+are selected.
 
 ## Motivation
 
-Why Flashback? If you're like me, you probably have terabytes of videos sitting on your machine, untouched and unwatched. The problem with many existing solutions, such as Apple Photos or GoPro Quik, is the lack of control over the original video quality and data. Often, you're required to import your videos into an app that maintains its own library, which can be a cumbersome process, especially for large collections.
+Why Flashback⚡️? If you're like me, you probably have terabytes of videos sitting on your machine,
+untouched and unwatched 🫠. The problem with many existing solutions, such as Apple Photos or GoPro Quik, 
+is the lack of control over the original video quality and data. Often, you're required to import your videos into an 
+app that maintains its own library, which can be a cumbersome process, especially for large collections.
 
-Flashback provides a lightweight, straightforward alternative. It respects your original video quality and allows for local processing—no need to upload gigabytes of videos to a cloud service or to your phone. It's a flashback in its purest form, without the frills of fancy music or edits. Simply point to the source folder, and get a flashback video generated on your machine. It's a convenient way to relive memories without the hassle.
+Flashback provides a lightweight, straightforward alternative. It respects your original video quality and allows for 
+local processing—no need to upload ☁️ gigabytes of videos to a cloud service or to your phone. It's a flashback in its 
+purest form, without the frills of fancy music or edits. Simply point to the source folders, and get a flashback 
+video ⚡️🎥 generated on your machine. It's a convenient way to relive memories without the hassle 😌.
 
 ## Requirements
 
@@ -45,7 +53,7 @@ For the video path, you can drag and drop the file in the terminal to get the pa
 You can run the script using the following command:
 
 ```bash
-python script_name.py --folder /path/to/videos --max-output-duration DURATION --min-clip-duration MIN_DURATION --max-clip-duration MAX_DURATION --order ORDER --extension EXTENSION
+python compile.py --folders /path/to/videos1 /path/to/videos2 /path/to/videos3 --max-output-duration DURATION --min-clip-duration MIN_DURATION --max-clip-duration MAX_DURATION --order ORDER --extension EXTENSION --debug DEBUG
 ```
 
 ### Parameters
@@ -56,6 +64,7 @@ python script_name.py --folder /path/to/videos --max-output-duration DURATION --
 - `--max-clip-duration`: Maximum clip duration in seconds (Required).
 - `--order`: Order of video selection (`rand` or `seq`). Defaults to `rand`.
 - `--extension`: Input video file extension. Defaults to `MP4`.
+- `--debug`: Enable debug mode. Defaults to `False`.
 
 ### Recommended parameters
 
@@ -63,20 +72,6 @@ python script_name.py --folder /path/to/videos --max-output-duration DURATION --
 - `--min-clip-duration`: 3
 - `--max-clip-duration`: 8
 - `--order`: `rand`
-
-## Example
-
-Compile videos randomly:
-
-```bash
-python script_name.py --folder /path/to/videos --max-output-duration 60 --min-clip-duration 5 --max-clip-duration 10 --order rand --extension MOV
-```
-
-Compile videos sequentially:
-
-```bash
-python script_name.py --folder /path/to/videos --max-output-duration 60 --min-clip-duration 5 --max-clip-duration 10 --order seq --extension MOV
-```
 
 ## Output
 
@@ -86,4 +81,3 @@ The script will generate a compiled video file in the current directory with a f
 
 - The script currently can handle only a few  open files, so if you want to create a long video > 5', then this will fail. Batch processing is not yet implemented.
 - The script currently only supports either MP4 or MOV files. Other formats will be added in the future.
-- Currently only works in macOS with Apple Silicon.

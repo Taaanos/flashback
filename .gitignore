@@ -15,6 +15,7 @@
 *.jpeg
 *.png
 *.gif
+!logo.jpg
 
 # misc
 *.DS_Store

@@ -1,4 +1,5 @@
 # Flashback
+<img src="logo.jpg" width="200" height="200">
 
 Flashback is a Python script that compiles videos from a specified folder either randomly or in sequence. It's possible to define the maximum output duration, minimum and maximum clip duration, and the order in which the videos are selected.
 

@@ -5,15 +5,19 @@ import random
 import os
 import argparse
 from datetime import datetime
-import subprocess
+from utils import get_resolution, get_rotation
+
+
+def get_video_files(folder, extension):
+    return [f for f in os.listdir(folder) if f.endswith('.' + extension)]
 
 
 def compile_videos(folder, max_output_duration, min_clip_duration, max_clip_duration, order, extension):
     dir_name = os.path.basename(os.path.normpath(folder))
-    output_filename = f"{dir_name}_{order}_{max_output_duration}_{min_clip_duration}_{max_clip_duration}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.{extension}"
+    output_filename = (f"{dir_name}_{order}_{max_output_duration}_{min_clip_duration}_{max_clip_duration}_"
+                       f"{datetime.now().strftime('%Y%m%d_%H%M%S')}.{extension}")
 
-    video_files = [f for f in os.listdir(folder) if f.endswith('.' + extension)]
-
+    video_files = get_video_files(folder, extension)
     if order == 'rand':
         random.shuffle(video_files)
     else:
@@ -35,7 +39,7 @@ def compile_videos(folder, max_output_duration, min_clip_duration, max_clip_dura
             height, width = width, height
             print(f"Video is rotated {rotation_angle} degrees. Switching width and height.")
         print(f"Video resolution: {width}x{height}")
-        clip = VideoFileClip(video_path, target_resolution=(height,width))
+        clip = VideoFileClip(video_path, target_resolution=(height, width))
 
         if args.debug:
             clip.save_frame(f"video_frame_{video_file}.png", t=clip.duration / 2)
@@ -74,50 +78,6 @@ def compile_videos(folder, max_output_duration, min_clip_duration, max_clip_dura
     # Close all subclip readers
     for clip in clips:
         clip.reader.close()
-
-
-def get_resolution(video_path):
-    cmd = [
-        "ffprobe",
-        "-v", "error",
-        "-select_streams", "v:0",
-        "-show_entries", "stream=width,height",
-        "-of", "csv=s=x:p=0",
-        video_path
-    ]
-
-    result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-
-    if result.stdout:
-        try:
-            dimensions = result.stdout.strip().split('x')  # strip and split
-            dimensions = [int(dim) for dim in dimensions if dim]  # convert to int, ignoring empty strings
-            if len(dimensions) == 2:
-                return dimensions[1], dimensions[0]  # return height, width
-            else:
-                print("Failed to parse video dimensions.")
-                return (0, 0)
-        except ValueError:
-            print("Failed to parse video dimensions.")
-            return (0, 0)
-    else:
-        print("Could not get video dimensions.")
-        return (0, 0)
-
-def get_rotation(video_path):
-    try:
-        cmd = ["mediainfo", "--Inform=Video;%Rotation%", video_path]
-        result = subprocess.run(cmd, capture_output=True, text=True)
-        rotation = int(float(result.stdout.strip()))
-        return rotation
-    except ValueError:
-        print(f"Could not parse rotation, received: {result.stdout.strip()}")
-        return 0
-    except Exception as e:
-        print(f"Could not get video rotation. Error: {e}")
-        return 0
-
-
 
 
 if __name__ == "__main__":

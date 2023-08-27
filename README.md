@@ -82,10 +82,8 @@ python script_name.py --folder /path/to/videos --max-output-duration 60 --min-cl
 
 The script will generate a compiled video file in the current directory with a filename containing the parameters used for compilation.
 
-## License
-
 ## Limitations
 
 - The script currently can handle only a few  open files, so if you want to create a long video > 5', then this will fail. Batch processing is not yet implemented.
 - The script currently only supports either MP4 or MOV files. Other formats will be added in the future.
-- Currently only works in MacOS with Apple Silicon.
+- Currently only works in macOS with Apple Silicon.

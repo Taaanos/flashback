@@ -50,6 +50,8 @@ video ⚡️🎥 generated on your machine. It's a convenient way to relive memo
 Create a folder containing the videos you want to compile; aka a video pool.
 For the video path, you can drag and drop the file in the terminal to get the path.
 
+Or simply select the folders you want to use as a video pool and drag and drop them in the terminal to get the paths.
+
 You can run the script using the following command:
 
 ```bash
@@ -58,7 +60,7 @@ python compile.py --folders /path/to/videos1 /path/to/videos2 /path/to/videos3 -
 
 ### Parameters
 
-- `--folder`: Path to the folder containing videos (Required).
+- `--folders`: Path to the folders containing videos (Required).
 - `--max-output-duration`: Maximum output duration in seconds (Required).
 - `--min-clip-duration`: Minimum clip duration in seconds (Required).
 - `--max-clip-duration`: Maximum clip duration in seconds (Required).

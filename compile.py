@@ -130,7 +130,9 @@ if __name__ == "__main__":
     parser.add_argument('--max-output-duration', type=int, required=True, help='Maximum output duration.')
     parser.add_argument('--max-clip-duration', type=int, required=True, help='Maximum clip duration.')
     parser.add_argument('--min-clip-duration', type=int, required=True, help='Minimum clip duration.')
+    parser.add_argument('--compression', type=int, default=50, choices=range(0, 52), help='Set the compression level. Use 0 for lossless and values up to 51 for varying levels of lossy compression.')
     parser.add_argument('--debug', action='store_true', help='Enable debug mode.')
+
     args = parser.parse_args()
 
     compile_videos(args.folder, args.max_output_duration, args.min_clip_duration, args.max_clip_duration, args.order,

@@ -78,10 +78,13 @@ if __name__ == "__main__":
     parser.add_argument('--max-output-duration', type=int, required=True, help='Maximum output duration.')
     parser.add_argument('--max-clip-duration', type=int, required=True, help='Maximum clip duration.')
     parser.add_argument('--min-clip-duration', type=int, required=True, help='Minimum clip duration.')
+    parser.add_argument('--n', type=int, default=1, help='The number of repetitions of the video to compile.')
     parser.add_argument('--debug', action='store_true', help='Enable debug mode.')
     args = parser.parse_args()
 
-    compile_videos(args.folders, args.max_output_duration, args.min_clip_duration, args.max_clip_duration, args.order,
+    for i in range(args.n):
+        compile_videos(args.folders, args.max_output_duration, args.min_clip_duration, args.max_clip_duration, args.order,
                    args.extension)
+
     print("Flashback done!")
 

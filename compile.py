@@ -34,12 +34,11 @@ def compile_videos(folders, max_output_duration, min_clip_duration, max_clip_dur
         end_time = random.uniform(start_time + min_clip_duration, min(start_time + max_clip_duration, clip.duration))
 
         if start_time < 0:
-            print(f"The video: {video_name} is too short to be used. Please use longer videos.")
-            sys.exit(1)
-
-        subclip = clip.subclip(start_time, end_time).set_fps(clip.fps)
-        clips.append(subclip)
-        total_duration += (end_time - start_time)
+            print(f"The video: {video_name} is too short to be used. Skipping...")
+        else:
+            subclip = clip.subclip(start_time, end_time).set_fps(clip.fps)
+            clips.append(subclip)
+            total_duration += (end_time - start_time)
 
         clip.reader.close()
 

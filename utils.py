@@ -28,7 +28,7 @@ def get_rotation(video_path):
         return 0
 
 
-def get_resolution(video_path):
+def get_video_resolution(video_path):
     """
     Get the resolution of a video file.
 
@@ -80,8 +80,13 @@ def get_video_rotation(video):
         tuple: (height, width) of the video, adjusted for rotation.
     """
     rotation_angle = get_rotation(video)
-    height, width = get_resolution(video)
+    height, width = get_video_resolution(video)
     if rotation_angle == 90 or rotation_angle == 270:
         height, width = width, height
         print(f"Video is rotated {rotation_angle} degrees. Switching width and height.")
     return height, width
+
+
+def has_valid_resolution(video_path, h, w):
+    height, width = get_video_resolution(video_path)
+    return (height == h and width == w) or (height == w and width == h)  # assume aspect ratio is enforced

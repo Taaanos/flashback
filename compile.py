@@ -5,19 +5,27 @@ import random
 import os
 import argparse
 from datetime import datetime
-from utils import get_video_rotation
+from utils import get_video_rotation, get_video_resolution
 from video_pool import create_video_pool, sort_videos
+from utils import has_valid_resolution
 
 
-def compile_videos(folders, max_output_duration, min_clip_duration, max_clip_duration, order, extension):
+def compile_videos(folders, max_output_duration, min_clip_duration, max_clip_duration, order, extension, resolution):
     video_pool = create_video_pool(folders, extension)
     video_pool = sort_videos(video_pool, order)
+    if resolution:
+        h, w = map(int, resolution.split(','))  # Convert the resolution string to integers for height and width
 
     clips = []
     total_duration = 0
 
     for video in video_pool:
         print(f"Using video: {video}")
+
+        if resolution and not has_valid_resolution(video, h, w):  # Check for resolution if provided
+            print(f"The video: {video} does not match the provided resolution {h}x{w}. Skipping...")
+            continue
+
         if total_duration >= max_output_duration:
             break
 
@@ -79,11 +87,13 @@ if __name__ == "__main__":
     parser.add_argument('--min-clip-duration', type=int, required=True, help='Minimum clip duration.')
     parser.add_argument('--n', type=int, default=1, help='The number of repetitions of the video to compile.')
     parser.add_argument('--debug', action='store_true', help='Enable debug mode.')
+    parser.add_argument('--resolution', type=str, default=None,
+                        help='Resolution to filter videos by, in format "height,width" e.g., "3840,2160".')
     args = parser.parse_args()
 
     for i in range(args.n):
         compile_videos(args.folders, args.max_output_duration, args.min_clip_duration, args.max_clip_duration, args.order,
-                   args.extension)
+                   args.extension, args.resolution)
 
     print("Flashback done!")
 

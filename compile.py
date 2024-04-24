@@ -1,25 +1,31 @@
 import sys
-
+import os
 from moviepy.editor import VideoFileClip, concatenate_videoclips
 import random
-import os
-import argparse
 from datetime import datetime
-from utils import get_video_rotation, get_video_resolution
+from utils import get_video_rotation
 from video_pool import create_video_pool, sort_videos
 from utils import has_valid_resolution
 
 
-def compile_videos(folders, max_output_duration, min_clip_duration, max_clip_duration, order, extension, resolution):
-    video_pool = create_video_pool(folders, extension)
-    video_pool = sort_videos(video_pool, order)
-    if resolution:
-        h, w = map(int, resolution.split(','))  # Convert the resolution string to integers for height and width
-
+def compile_videos(folders, max_output_duration, min_clip_duration, max_clip_duration, order, extension, resolution, debug, output_location):
+    
+    videos = create_video_pool(folders, extension)
+    videos = sort_videos(videos, order)
+    
+    output_filename = (f"{output_location}/flashback_{order}_{max_output_duration}_{min_clip_duration}_{max_clip_duration}_"
+                       f"{datetime.now().strftime('%Y%m%d_%H%M%S')}.{extension}")
+    
+    codec="hevc_videotoolbox"
+    ffmpeg_params=['-q:v', '50', '-profile:v', 'main', '-level', '5.0', '-tag:v', 'hvc1', '-c:a', 'aac']
+    
     clips = []
     total_duration = 0
 
-    for video in video_pool:
+    if resolution:
+        h, w = map(int, resolution.split(','))  # Convert the resolution string to integers for height and width
+
+    for video in videos:
         print(f"Using video: {video}")
 
         if resolution and not has_valid_resolution(video, h, w):  # Check for resolution if provided
@@ -32,10 +38,11 @@ def compile_videos(folders, max_output_duration, min_clip_duration, max_clip_dur
         # There is a bug in moviepy that doesn't respect the rotation metadata
         # see https://github.com/Zulko/moviepy/issues/1871
         height, width = get_video_rotation(video)
+        
         clip = VideoFileClip(video, target_resolution=(height, width))
-        print(f"Used video path:{video}")
         video_name = os.path.basename(video)
-        if args.debug:
+        
+        if debug:
             clip.save_frame(f"video_frame_{video_name}.png", t=clip.duration / 2)
 
         start_time = random.uniform(0, clip.duration - min_clip_duration)
@@ -50,13 +57,12 @@ def compile_videos(folders, max_output_duration, min_clip_duration, max_clip_dur
 
         clip.reader.close()
 
-    if args.debug:
+    if debug:
         for clip in clips:
             clip.save_frame(f"clip_frame{video_name}.png", t=clip.duration / 2)
 
-    output_filename = (f"flashback_{order}_{max_output_duration}_{min_clip_duration}_{max_clip_duration}_"
-                       f"{datetime.now().strftime('%Y%m%d_%H%M%S')}.{extension}")
-    if clips:  # Check if there are valid clips
+   
+    if clips:
         final_video = concatenate_videoclips(clips)
         try:
             final_video.write_videofile(output_filename, codec="hevc_videotoolbox", ffmpeg_params=['-q:v', '50',
@@ -73,27 +79,3 @@ def compile_videos(folders, max_output_duration, min_clip_duration, max_clip_dur
     # Close all subclip readers
     for clip in clips:
         clip.reader.close()
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Compile videos either randomly or in sequence.')
-    parser.add_argument('--order', choices=['rand', 'seq'], default='rand',
-                        help='Order of video selection (rand or seq).')
-    parser.add_argument('--extension', choices=['MOV', 'MP4'], default='MP4',
-                        help='Extension of video files.')
-    parser.add_argument('--folders', nargs='+', required=True, help='List of folders containing videos.')
-    parser.add_argument('--max-output-duration', type=int, required=True, help='Maximum output duration.')
-    parser.add_argument('--max-clip-duration', type=int, required=True, help='Maximum clip duration.')
-    parser.add_argument('--min-clip-duration', type=int, required=True, help='Minimum clip duration.')
-    parser.add_argument('--n', type=int, default=1, help='The number of repetitions of the video to compile.')
-    parser.add_argument('--debug', action='store_true', help='Enable debug mode.')
-    parser.add_argument('--resolution', type=str, default=None,
-                        help='Resolution to filter videos by, in format "height,width" e.g., "3840,2160".')
-    args = parser.parse_args()
-
-    for i in range(args.n):
-        compile_videos(args.folders, args.max_output_duration, args.min_clip_duration, args.max_clip_duration, args.order,
-                   args.extension, args.resolution)
-
-    print("Flashback done!")
-

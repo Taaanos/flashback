@@ -114,9 +114,9 @@ class Ui_MainWindow(object):
         compile_videos(folders, max_output_duration, min_clip_duration, max_clip_duration, order, container, None, debug, output_location)
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
-        self.TitleLabel.setText(QCoreApplication.translate("MainWindow", u"Flashback Config", None))
-        self.compileBtn.setText(QCoreApplication.translate("MainWindow", u"Compile Flashaback", None))
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"Flashback", None))
+        self.TitleLabel.setText(QCoreApplication.translate("MainWindow", u"Config", None))
+        self.compileBtn.setText(QCoreApplication.translate("MainWindow", u"Compile", None))
         self.outputFolderTextEdit.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"

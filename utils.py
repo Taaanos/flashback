@@ -1,4 +1,6 @@
 import subprocess
+import logging
+logger = logging.getLogger(__name__)
 
 
 def get_rotation(video_path):
@@ -21,10 +23,10 @@ def get_rotation(video_path):
         rotation = int(float(result.stdout.strip()))
         return rotation
     except ValueError:
-        print(f"Could not parse rotation, received: {result.stdout.strip()}")
+        logger.error(f"Could not parse rotation, received: {result.stdout.strip()}")
         return 0
     except Exception as e:
-        print(f"Could not get video rotation. Error: {e}")
+        logger.error(f"Could not get video rotation. Error: {e}")
         return 0
 
 
@@ -59,13 +61,13 @@ def get_video_resolution(video_path):
             if len(dimensions) == 2:
                 return dimensions[1], dimensions[0]  # return height, width
             else:
-                print("Failed to parse video dimensions.")
+                logger.error("Failed to parse video dimensions.")
                 return (0, 0)
         except ValueError:
-            print("Failed to parse video dimensions.")
+            logger.error("Failed to parse video dimensions.")
             return (0, 0)
     else:
-        print("Could not get video dimensions.")
+        logger.error("Could not get video dimensions.")
         return (0, 0)
 
 
@@ -83,7 +85,7 @@ def get_video_rotation(video):
     height, width = get_video_resolution(video)
     if rotation_angle == 90 or rotation_angle == 270:
         height, width = width, height
-        print(f"Video is rotated {rotation_angle} degrees. Switching width and height.")
+        logger.info(f"Video is rotated {rotation_angle} degrees. Switching width and height.")
     return height, width
 
 

@@ -1,5 +1,5 @@
 # Flashback
-<img src="logo.jpg" width="200" height="200">
+<img src="assets/logo.jpg" width="200" height="200">
 
 Flashback is an app that compiles videos by choosing from a small set of options.  
 
@@ -63,7 +63,7 @@ Launch the app and shortly the GUI will pop up.
 ```bash
 python3 ./main.py
 ```
-![gui](gui.jpg)
+![gui](assets/gui.jpg)
 
 ## Output
 

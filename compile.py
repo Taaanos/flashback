@@ -6,6 +6,8 @@ from datetime import datetime
 from utils import get_video_rotation
 from video_pool import create_video_pool, sort_videos
 from utils import has_valid_resolution
+import logging
+logger = logging.getLogger(__name__)
 
 
 def compile_videos(folders, max_output_duration, min_clip_duration, max_clip_duration, order, extension, resolution, debug, output_location):
@@ -15,10 +17,7 @@ def compile_videos(folders, max_output_duration, min_clip_duration, max_clip_dur
     
     output_filename = (f"{output_location}/flashback_{order}_{max_output_duration}_{min_clip_duration}_{max_clip_duration}_"
                        f"{datetime.now().strftime('%Y%m%d_%H%M%S')}.{extension}")
-    
-    codec="hevc_videotoolbox"
-    ffmpeg_params=['-q:v', '50', '-profile:v', 'main', '-level', '5.0', '-tag:v', 'hvc1', '-c:a', 'aac']
-    
+       
     clips = []
     total_duration = 0
 
@@ -26,10 +25,10 @@ def compile_videos(folders, max_output_duration, min_clip_duration, max_clip_dur
         h, w = map(int, resolution.split(','))  # Convert the resolution string to integers for height and width
 
     for video in videos:
-        print(f"Using video: {video}")
+        logger.info(f"Using video: {video}")
 
         if resolution and not has_valid_resolution(video, h, w):  # Check for resolution if provided
-            print(f"The video: {video} does not match the provided resolution {h}x{w}. Skipping...")
+            logger.debug(f"The video: {video} does not match the provided resolution {h}x{w}. Skipping...")
             continue
 
         if total_duration >= max_output_duration:
@@ -49,7 +48,7 @@ def compile_videos(folders, max_output_duration, min_clip_duration, max_clip_dur
         end_time = random.uniform(start_time + min_clip_duration, min(start_time + max_clip_duration, clip.duration))
 
         if start_time < 0:
-            print(f"The video: {video_name} is too short to be used. Skipping...")
+            logger.debug(f"The video: {video_name} is too short to be used. Skipping...")
         else:
             subclip = clip.subclip(start_time, end_time).set_fps(clip.fps)
             clips.append(subclip)
@@ -71,10 +70,10 @@ def compile_videos(folders, max_output_duration, min_clip_duration, max_clip_dur
                                                                                                    '-tag:v', 'hvc1',
                                                                                                    '-c:a', 'aac'])
         except Exception as e:
-            print(f"Error: {e}")
+            logger.error(f"Error: {e}")
             sys.exit(1)
     else:
-        print("No valid clips found.")
+        logger.info("No valid clips found.")
 
     # Close all subclip readers
     for clip in clips:

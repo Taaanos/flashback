@@ -1,5 +1,7 @@
 import os
 import random
+import logging
+logger = logging.getLogger(__name__)
 
 
 def create_video_pool(folders, extension):
@@ -39,5 +41,5 @@ def sort_videos(video_list, order):
         random.shuffle(video_list)
         return video_list
     else:
-        print("Invalid order argument. Use 'chronological' or 'random'")
+        logger.error("Invalid order argument. Use 'chronological' or 'random'")
         return video_list

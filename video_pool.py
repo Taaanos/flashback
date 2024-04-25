@@ -28,16 +28,16 @@ def sort_videos(video_list, order):
 
     Parameters:
     - video_list (list): List of video file paths to sort.
-    - order (str): Sorting order ('seq' for sequential, 'rand' for random).
+    - order (str): Sorting order ('chronological' or 'random').
 
     Returns:
     - list: Sorted list of video file paths.
     """
-    if order == "seq":
+    if order == "chronological":
         return sorted(video_list, key=lambda x: os.path.getmtime(x))
-    elif order == "rand":
+    elif order == "random":
         random.shuffle(video_list)
         return video_list
     else:
-        print("Invalid order argument. Use 'seq' for sequential or 'rand' for random.")
+        print("Invalid order argument. Use 'chronological' or 'random'")
         return video_list

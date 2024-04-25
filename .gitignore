@@ -20,8 +20,8 @@
 # misc
 *.DS_Store
 
-#text files
-*.txt
-
 # pycache
 __pycache__/
+
+# env
+env/

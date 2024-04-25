@@ -63,7 +63,7 @@ Launch the app and shortly the GUI will pop up.
 ```bash
 python3 ./main.py
 ```
-![alt text](gui.png)
+![gui](gui.jpg)
 
 ## Output
 
